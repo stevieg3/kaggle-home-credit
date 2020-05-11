@@ -1,3 +1,4 @@
+import pandas as pd
 import numpy as np
 
 CATEGORICAL_FEATURES_WITH_NULLS = [
@@ -11,6 +12,18 @@ CATEGORICAL_FEATURES_WITH_NULLS = [
 """
 Categorical features in training set which had nulls
 """
+
+
+def preprocess_application_data(X):
+    X = X.copy()
+    X = impute_null_categorical_features(X)
+
+    # OHE
+    object_columns = X.select_dtypes(include=object).columns
+    assert X[object_columns].isnull().sum().sum() == 0, "Nulls found in categorical columns"
+    X = pd.get_dummies(X, columns=object_columns)
+
+    return X
 
 
 def impute_null_categorical_features(X):
@@ -43,6 +56,9 @@ def impute_null_categorical_features(X):
             (X['NAME_INCOME_TYPE'] == name_income_type) & (X['OCCUPATION_TYPE'].isnull()),
             'OCCUPATION_TYPE'
         ] = 'Laborers'
+
+    # Fill any other nulls with 'Laborers' (e.g. NAME_INCOME_TYPEs which appear in dev/test but were not in training):
+    X['OCCUPATION_TYPE'].fillna('Laborers', inplace=True)
 
     # FONDKAPREMONT_MODE
     X.drop('FONDKAPREMONT_MODE', axis=1, inplace=True)
