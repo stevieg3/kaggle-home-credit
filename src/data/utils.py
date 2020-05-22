@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 from src.data.bureau_data import process_bureau_data
+from src.data.previous_and_monthly_data import process_all_other_data
 
 
 def _create_column_description_dict():
@@ -37,12 +38,16 @@ def load_datasets(random_seed):
     # Do get_dummies on the entire dataset to avoid future errors
     combined = pd.get_dummies(combined, dummy_na=True, columns=object_columns)
 
-    # Remove non-alphanumeric characters in column names (otherwise LGBM errors)
-    combined.columns = ["".join(c if c.isalnum() else "_" for c in str(x)) for x in combined.columns]
-
     # Add bureau data
     bureau_processed = process_bureau_data()
     combined = combined.merge(bureau_processed, on='SK_ID_CURR', how='left')
+
+    # Add other data
+    other_data = process_all_other_data()
+    combined = combined.merge(other_data, on='SK_ID_CURR', how='left')
+
+    # Remove non-alphanumeric characters in column names (otherwise LGBM errors)
+    combined.columns = ["".join(c if c.isalnum() else "_" for c in str(x)) for x in combined.columns]
 
     # Split data
     train = combined.copy()[combined['is_train_orig'] == 1]

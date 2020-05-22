@@ -93,7 +93,7 @@ def process_bureau_data():
     bureau_full.drop(object_columns, axis=1, inplace=True)
     bureau_full.drop('SK_ID_BUREAU', axis=1, inplace=True)
 
-    bureau_numeric_data = bureau_full.groupby('SK_ID_CURR').agg([np.mean, np.sum, np.min, np.max, np.std]).reset_index()
+    bureau_numeric_data = bureau_full.groupby('SK_ID_CURR').agg([np.mean, np.sum, np.min, np.max]).reset_index()
     bureau_numeric_data.columns = ["_".join(x) for x in bureau_numeric_data.columns.ravel()]
     bureau_numeric_data.rename(columns={'SK_ID_CURR_': 'SK_ID_CURR'}, inplace=True)
 

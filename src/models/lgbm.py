@@ -7,28 +7,35 @@ from src.data.utils import load_datasets
 RANDOM_SEED = 42
 
 
-def fit_lgbm():
-    train, dev, test, test_kaggle = load_datasets(random_seed=RANDOM_SEED)
+def fit_lgbm(train_data=None):
 
-    X_train = train.drop(['SK_ID_CURR', 'TARGET'], axis=1)
-    y_train = train['TARGET']
-    X_dev = dev.drop(['SK_ID_CURR', 'TARGET'], axis=1)
-    y_dev = dev['TARGET']
+    if train_data is None:
+        train, dev, test, test_kaggle = load_datasets(random_seed=RANDOM_SEED)
+
+        X_train = train.drop(['SK_ID_CURR', 'TARGET'], axis=1)
+        y_train = train['TARGET']
+        X_dev = dev.drop(['SK_ID_CURR', 'TARGET'], axis=1)
+        y_dev = dev['TARGET']
+
+    else:
+        X_train = train_data.drop(['SK_ID_CURR', 'TARGET'], axis=1)
+        y_train = train_data['TARGET']
 
     PARAM_DISTRIBUTIONS = {
         'num_leaves': list(range(20, 150)),
         'learning_rate': list(np.logspace(np.log10(0.005), np.log10(0.5), base=10, num=1000)),
         'subsample_for_bin': list(range(20000, 300000, 20000)),
         'min_child_samples': list(range(20, 500, 5)),
-        'reg_alpha': list(np.linspace(0, 1)),
-        'reg_lambda': list(np.linspace(0, 1)),
+        'reg_alpha': list(np.logspace(np.log10(0.01), np.log10(100), base=10, num=1000)),
+        'reg_lambda': list(np.logspace(np.log10(0.01), np.log10(100), base=10, num=1000)),
         'colsample_bytree': list(np.linspace(0.6, 1, 10)),
         'subsample': list(np.linspace(0.5, 1, 100)),
-        'is_unbalance': [True, False]
+        # 'is_unbalance': [True, False]
     }
     """
     Taken from https://www.kaggle.com/willkoehrsen/intro-to-model-tuning-grid-and-random-search
     """
+    print(PARAM_DISTRIBUTIONS.keys())
 
     lgbm_random = RandomizedSearchCV(
         lightgbm.LGBMClassifier(),

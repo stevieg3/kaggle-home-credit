@@ -59,7 +59,7 @@ def lgbm_feature_reduction(
         if lgbm_params:
             lgbm_new = lightgbm.LGBMClassifier(**lgbm_params)
         else:
-            lgbm_new = lightgbm.LGBMClassifier(**lgbm_params)
+            lgbm_new = lightgbm.LGBMClassifier()
 
         lgbm_new.fit(X_train, y_train)
 
