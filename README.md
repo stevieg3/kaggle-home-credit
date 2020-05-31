@@ -3,6 +3,10 @@ kaggle-home-credit
 
 Kaggle Home Credit Default Risk competition (completed after submission deadline) (https://www.kaggle.com/c/home-credit-default-risk/overview)
 
+Exploring and learning about hyperparameter tuning (random and Bayes), simple neural networks with Keras API, oversampling and probability calibration.
+
+Focus is not on feature engineering which is ultimately the key to a high score in the competition.
+
 Project Organization
 ------------
 
